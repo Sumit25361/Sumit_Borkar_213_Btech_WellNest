@@ -82,34 +82,6 @@ function WalkingPage() {
 }
 
 const s = {
-<<<<<<< HEAD
-    page: { minHeight: '100vh', background: 'linear-gradient(135deg,#fff8e1,#fff3cd)', fontFamily: "'Segoe UI',sans-serif" },
-    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 32px', background: '#fff', boxShadow: '0 1px 8px rgba(0,0,0,0.08)' },
-    brand: { color: '#e65100', fontSize: '20px', fontWeight: '700', margin: 0 },
-    back: { background: 'none', border: '1px solid #ffcc80', borderRadius: '8px', padding: '8px 16px', color: '#e65100', cursor: 'pointer', fontWeight: '600' },
-    logoutBtn: { background: '#e53935', color: '#fff', border: 'none', borderRadius: '8px', padding: '8px 18px', fontWeight: '700', cursor: 'pointer' },
-    body: { display: 'flex', gap: '24px', padding: '28px 32px', flexWrap: 'wrap' },
-    left: { display: 'flex', flexDirection: 'column', gap: '20px', flex: 1, minWidth: '280px' },
-    right: { flex: 1, minWidth: '280px' },
-    card: { background: '#fff', borderRadius: '16px', padding: '24px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' },
-    cardTitle: { color: '#e65100', fontWeight: '700', fontSize: '16px', margin: '0 0 12px' },
-    sub: { color: '#666', fontSize: '13px', margin: '0 0 10px' },
-    bar: { background: '#fff3e0', borderRadius: '8px', height: '12px', overflow: 'hidden', marginBottom: '8px' },
-    fill: { background: 'linear-gradient(90deg,#e65100,#ff9800)', height: '100%', borderRadius: '8px', transition: 'width 0.4s' },
-    pct: { fontWeight: '700', fontSize: '15px', margin: 0 },
-    label: { display: 'block', fontSize: '13px', color: '#555', marginBottom: '6px', marginTop: '12px' },
-    input: { width: '100%', padding: '10px', borderRadius: '8px', border: '1.5px solid #ffcc80', fontSize: '14px', boxSizing: 'border-box', outline: 'none' },
-    estimate: { marginTop: '10px', fontSize: '13px', color: '#555', background: '#fff8e1', padding: '8px 12px', borderRadius: '8px' },
-    btn: { marginTop: '16px', width: '100%', padding: '12px', background: 'linear-gradient(90deg,#e65100,#ff9800)', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: '700', fontSize: '15px', cursor: 'pointer' },
-    row: { display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 0', borderBottom: '1px solid #f0f0f0' },
-    rowIcon: { fontSize: '22px' },
-    rowTitle: { margin: 0, fontWeight: '600', fontSize: '14px', color: '#222' },
-    rowSub: { margin: 0, fontSize: '12px', color: '#888' },
-    rowTime: { marginLeft: 'auto', fontSize: '12px', color: '#aaa', whiteSpace: 'nowrap', marginRight: '8px' },
-    deleteBtn: { background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px', padding: '4px', opacity: 0.6, transition: 'opacity 0.2s' },
-};
-
-=======
     page: { minHeight: '100vh', background: 'linear-gradient(160deg, #0f1a0a 0%, #1a2f10 40%, #0d1a08 100%)', fontFamily: "'Segoe UI',sans-serif" },
     header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 32px', background: 'rgba(8,18,5,0.92)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(74,222,128,0.2)', boxShadow: '0 4px 24px rgba(0,0,0,0.5)' },
     brand: { color: '#4ade80', fontSize: '20px', fontWeight: '700', margin: 0, textShadow: '0 0 20px rgba(74,222,128,0.5)' },
@@ -135,6 +107,4 @@ const s = {
     deleteBtn: { background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px', padding: '4px', opacity: 0.6, transition: 'opacity 0.2s' },
 };
 
-
->>>>>>> 43b7b37 (Initial commit: Health and Wellness project)
 export default WalkingPage;

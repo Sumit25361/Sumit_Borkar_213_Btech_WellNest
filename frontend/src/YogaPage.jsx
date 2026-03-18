@@ -95,37 +95,6 @@ function YogaPage() {
 }
 
 const s = {
-<<<<<<< HEAD
-    page: { minHeight: '100vh', background: 'linear-gradient(135deg,#fce4ec,#fdf2f8)', fontFamily: "'Segoe UI',sans-serif" },
-    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 32px', background: '#fff', boxShadow: '0 1px 8px rgba(0,0,0,0.08)' },
-    brand: { color: '#c2185b', fontSize: '20px', fontWeight: '700', margin: 0 },
-    back: { background: 'none', border: '1px solid #f48fb1', borderRadius: '8px', padding: '8px 16px', color: '#c2185b', cursor: 'pointer', fontWeight: '600' },
-    logoutBtn: { background: '#e53935', color: '#fff', border: 'none', borderRadius: '8px', padding: '8px 18px', fontWeight: '700', cursor: 'pointer' },
-    body: { display: 'flex', gap: '24px', padding: '28px 32px', flexWrap: 'wrap' },
-    left: { display: 'flex', flexDirection: 'column', gap: '20px', flex: 1, minWidth: '280px' },
-    right: { flex: 1, minWidth: '280px' },
-    card: { background: '#fff', borderRadius: '16px', padding: '24px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' },
-    cardTitle: { color: '#c2185b', fontWeight: '700', fontSize: '16px', margin: '0 0 12px' },
-    summary: { color: '#444', fontSize: '14px', margin: '6px 0' },
-    poseRow: { borderRadius: '10px', padding: '10px 12px', marginBottom: '8px', cursor: 'pointer', transition: 'all 0.2s' },
-    poseName: { margin: 0, fontWeight: '700', color: '#880e4f', fontSize: '14px' },
-    poseDesc: { margin: '4px 0 0', fontSize: '12px', color: '#6b7280' },
-    level: { fontSize: '11px', fontWeight: '700', padding: '2px 8px', borderRadius: '10px', height: 'fit-content' },
-    selectedBox: { background: '#fce4ec', borderRadius: '10px', padding: '12px', marginBottom: '12px' },
-    selName: { margin: 0, fontWeight: '700', color: '#c2185b', fontSize: '14px' },
-    selDesc: { margin: '4px 0 0', fontSize: '12px', color: '#666' },
-    label: { display: 'block', fontSize: '13px', color: '#555', marginBottom: '6px', marginTop: '12px' },
-    input: { width: '100%', padding: '10px', borderRadius: '8px', border: '1.5px solid #f48fb1', fontSize: '14px', boxSizing: 'border-box', outline: 'none' },
-    btn: { marginTop: '16px', width: '100%', padding: '12px', background: 'linear-gradient(90deg,#c2185b,#e91e63)', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: '700', fontSize: '15px', cursor: 'pointer' },
-    row: { display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 0', borderBottom: '1px solid #f0f0f0' },
-    rowIcon: { fontSize: '22px' },
-    rowTitle: { margin: 0, fontWeight: '600', fontSize: '14px', color: '#222' },
-    rowSub: { margin: 0, fontSize: '12px', color: '#888' },
-    rowTime: { marginLeft: 'auto', fontSize: '12px', color: '#aaa', whiteSpace: 'nowrap', marginRight: '8px' },
-    deleteBtn: { background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px', padding: '4px', opacity: 0.6, transition: 'opacity 0.2s' },
-};
-
-=======
     page: { minHeight: '100vh', background: 'linear-gradient(160deg, #1a0a2e 0%, #2d1b4e 40%, #1a0f35 100%)', fontFamily: "'Segoe UI',sans-serif" },
     header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 32px', background: 'rgba(18,6,40,0.92)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(168,85,247,0.2)', boxShadow: '0 4px 24px rgba(0,0,0,0.5)' },
     brand: { color: '#c084fc', fontSize: '20px', fontWeight: '700', margin: 0, textShadow: '0 0 20px rgba(168,85,247,0.5)' },
@@ -154,6 +123,4 @@ const s = {
     deleteBtn: { background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px', padding: '4px', opacity: 0.6, transition: 'opacity 0.2s' },
 };
 
-
->>>>>>> 43b7b37 (Initial commit: Health and Wellness project)
 export default YogaPage;
