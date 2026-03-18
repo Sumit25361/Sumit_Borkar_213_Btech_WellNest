@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-=======
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
->>>>>>> 43b7b37 (Initial commit: Health and Wellness project)
 import { useAuth } from './AuthContext';
 import './index.css';
 
@@ -12,14 +7,6 @@ function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-<<<<<<< HEAD
-    const { login } = useAuth();
-    const navigate = useNavigate();
-
-    const validateEmail = (email) => {
-        const re = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
-        return re.test(String(email).toLowerCase());
-=======
     const [loading, setLoading] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -38,30 +25,19 @@ function Login() {
     const validateEmail = (email) => {
         const re = /^[a-zA-Z0-9._%+-]+@gmail\.com$/i;
         return re.test(String(email).trim());
->>>>>>> 43b7b37 (Initial commit: Health and Wellness project)
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
-<<<<<<< HEAD
-        if (!validateEmail(email)) {
-=======
         const trimmedEmail = email.trim();
 
         if (!validateEmail(trimmedEmail)) {
->>>>>>> 43b7b37 (Initial commit: Health and Wellness project)
             setError('Please enter a valid Gmail address (e.g., user@gmail.com)');
             return;
         }
 
-<<<<<<< HEAD
-        const result = await login(email, password);
-        if (result.success) {
-            if (result.role === 'admin') {
-                navigate('/admin-dashboard');
-=======
         setLoading(true);
         const result = await login(trimmedEmail, password);
         setLoading(false);
@@ -71,7 +47,6 @@ function Login() {
                 navigate('/admin-dashboard');
             } else if (result.role === 'trainer') {
                 navigate('/trainer-dashboard');
->>>>>>> 43b7b37 (Initial commit: Health and Wellness project)
             } else {
                 navigate('/dashboard');
             }
@@ -81,59 +56,7 @@ function Login() {
     };
 
     return (
-<<<<<<< HEAD
-        <div className="login-container">
-            <div className="login-box">
-                <div className="logo-section">
-                    <h1 className="brand-logo">Health & Wellness</h1>
-                    <h2>Welcome Back</h2>
-                    <p>Login to your account</p>
-                </div>
-
-                <form onSubmit={handleSubmit} className="login-form">
-                    {error && <div className="error-message" style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
-                    <div className="input-group">
-                        <input
-                            type="text"
-                            required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder=" "
-                        />
-                        <label>Email (Gmail only)</label>
-                    </div>
-
-                    <div className="input-group">
-                        <input
-                            type="password"
-                            required
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder=" "
-                        />
-                        <label>Password</label>
-                    </div>
-
-                    <div className="actions">
-                        <Link to="/forgot-password" className="forgot-email">
-                            Forgot password?
-                        </Link>
-                    </div>
-
-                    <div className="footer-actions">
-                        <Link to="/register" className="create-account">
-                            Create account
-                        </Link>
-
-                        <button type="submit" className="next-btn">
-                            Next
-                        </button>
-                    </div>
-
-                </form>
-=======
         <div className="auth-page">
-            {/* Left branding panel */}
             <div className="auth-left">
                 <div className="auth-brand-block">
                     <div className="auth-brand-icon">🌿</div>
@@ -155,7 +78,6 @@ function Login() {
                 </div>
             </div>
 
-            {/* Right form panel */}
             <div className="auth-right">
                 <div className="auth-card">
                     <div className="auth-card-title">Welcome back 👋</div>
@@ -220,7 +142,6 @@ function Login() {
                         💡 New here? <Link to="/register">Register first</Link> to create your account
                     </div>
                 </div>
->>>>>>> 43b7b37 (Initial commit: Health and Wellness project)
             </div>
         </div>
     );
