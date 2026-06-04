@@ -22,7 +22,7 @@ export default function TrainerSidebar() {
     const info = TRAINER_INFO[user?.email] || { 
         name: user?.name || 'Trainer', 
         spec: 'Fitness Coach', 
-        gradient: 'linear-gradient(135deg,#e8621a,#d97706)', 
+        gradient: 'linear-gradient(135deg,#10b981,#d97706)', 
         price: '' 
     };
     const initials = getInitials(info.name);

@@ -14,16 +14,36 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try {
-            const response = await fetch('http://localhost:5000/api/login', {
+            const response = await fetch('http://localhost:8080/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
             });
             const data = await response.json();
             if (data.success) {
-                localStorage.setItem('user', JSON.stringify(data.user));
-                setUser(data.user);
-                return { success: true, role: data.user.role };
+                // List of VIP trainers who get the 'trainer' role automatically
+                const TRAINER_EMAILS = [
+                    'priya.sharma@gmail.com',
+                    'arjun.mehta@gmail.com',
+                    'sneha.patel@gmail.com',
+                    'ravi.kumar@gmail.com',
+                    'ananya.singh@gmail.com',
+                    'karan.joshi@gmail.com'
+                ];
+
+                let role = data.user.role.toLowerCase();
+                const normalizedEmail = email.toLowerCase().trim();
+                
+                if (TRAINER_EMAILS.map(e => e.toLowerCase()).includes(normalizedEmail)) {
+                    role = 'trainer';
+                } else if (normalizedEmail === 'admin@gmail.com') {
+                    role = 'admin';
+                }
+
+                const userData = { ...data.user, role };
+                localStorage.setItem('user', JSON.stringify(userData));
+                setUser(userData);
+                return { success: true, role: userData.role };
             }
             return { success: false, message: data.message };
         } catch (error) {
@@ -33,7 +53,7 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (userData) => {
         try {
-            const response = await fetch('http://localhost:5000/api/register', {
+            const response = await fetch('http://localhost:8080/api/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(userData)
@@ -52,7 +72,7 @@ export const AuthProvider = ({ children }) => {
 
     const checkEmail = async (email) => {
         try {
-            const response = await fetch('http://localhost:5000/api/check-email', {
+            const response = await fetch('http://localhost:8080/api/check-email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })
@@ -67,7 +87,7 @@ export const AuthProvider = ({ children }) => {
 
     const resetPassword = async (email, newPassword) => {
         try {
-            const response = await fetch('http://localhost:5000/api/reset-password', {
+            const response = await fetch('http://localhost:8080/api/reset-password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, newPassword })
@@ -87,3 +107,4 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
+

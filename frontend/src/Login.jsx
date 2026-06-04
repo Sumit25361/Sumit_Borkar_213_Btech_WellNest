@@ -43,15 +43,16 @@ function Login() {
         setLoading(false);
 
         if (result.success) {
-            if (result.role === 'admin') {
+            const userRole = result.role?.toLowerCase();
+            if (userRole === 'admin') {
                 navigate('/admin-dashboard');
-            } else if (result.role === 'trainer') {
+            } else if (userRole === 'trainer') {
                 navigate('/trainer-dashboard');
             } else {
                 navigate('/dashboard');
             }
         } else {
-            setError(result.message);
+            setError(result.message || 'Invalid email or password. Have you registered yet?');
         }
     };
 

@@ -10,3 +10,8 @@ yarn-error.log*
 .vscode/
 build/
 all_conflicts.txt
+target/
+.settings/
+.classpath
+.project
+out/

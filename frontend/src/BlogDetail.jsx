@@ -14,7 +14,7 @@ const BlogDetail = () => {
 
     const fetchBlog = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/api/blogs/${id}`);
+            const res = await fetch(`http://localhost:8080/api/blogs/${id}`);
             const data = await res.json();
             if (data.success !== false) setBlog(data);
         } catch (err) {
@@ -30,7 +30,7 @@ const BlogDetail = () => {
     const handleLike = async () => {
         if (!user) return;
         try {
-            const res = await fetch(`http://localhost:5000/api/blogs/${id}/like`, {
+            const res = await fetch(`http://localhost:8080/api/blogs/${id}/like`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: user.email })
@@ -49,7 +49,7 @@ const BlogDetail = () => {
         if (!comment.trim() || !user) return;
         setSubmitting(true);
         try {
-            const res = await fetch(`http://localhost:5000/api/blogs/${id}/comment`, {
+            const res = await fetch(`http://localhost:8080/api/blogs/${id}/comment`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -72,7 +72,7 @@ const BlogDetail = () => {
     const handleDelete = async () => {
         if (!window.confirm('Are you sure you want to delete this article?')) return;
         try {
-            const res = await fetch(`http://localhost:5000/api/blogs/${id}`, {
+            const res = await fetch(`http://localhost:8080/api/blogs/${id}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ authorEmail: user.email })
@@ -95,11 +95,23 @@ const BlogDetail = () => {
     const isAuthor = user?.email === blog.authorEmail;
     const isAdmin = user?.role === 'admin';
 
+    let likesList = [];
+    if (blog.likes) {
+        if (Array.isArray(blog.likes)) likesList = blog.likes;
+        else {
+            try {
+                likesList = JSON.parse(blog.likes);
+            } catch {
+                likesList = [];
+            }
+        }
+    }
+
     return (
         <div className="bd-container">
             {!isAdmin && (
                 <button className="bd-back-btn" onClick={handleBack}>
-                    ← Back to Dashboard
+                    ← Back to Dashboard
                 </button>
             )}
 
@@ -132,8 +144,8 @@ const BlogDetail = () => {
                 </div>
 
                 <div className="bd-actions">
-                    <button className={`bd-like-btn ${blog.likes?.includes(user?.email) ? 'active' : ''}`} onClick={handleLike}>
-                        ❤️ {blog.likes?.length || 0} Likes
+                    <button className={`bd-like-btn ${likesList.includes(user?.email) ? 'active' : ''}`} onClick={handleLike}>
+                        ❤️ {likesList.length} Likes
                     </button>
                     <button className="bd-share-btn" onClick={() => {
                         navigator.clipboard.writeText(window.location.href);
@@ -173,3 +185,4 @@ const BlogDetail = () => {
 };
 
 export default BlogDetail;
+

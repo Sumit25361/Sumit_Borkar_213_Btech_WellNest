@@ -17,7 +17,7 @@ const MatchingSystem = () => {
     const goalOptions = [
         { id: 'weight-loss', label: 'Weight Loss', icon: '⚖️' },
         { id: 'muscle-gain', label: 'Muscle Gain', icon: '💪' },
-        { id: 'flexibility', label: 'Flexibility', icon: '🤸' },
+        { id: 'flexibility', label: 'Flexibility', icon: '🧘' },
         { id: 'wellness', label: 'General Wellness', icon: '🌿' },
         { id: 'rehab', label: 'Injury Recovery', icon: '🩹' },
     ];
@@ -40,7 +40,7 @@ const MatchingSystem = () => {
         setLoading(true);
         setStep(2);
         try {
-            const res = await fetch('http://localhost:5000/api/match-trainers', {
+            const res = await fetch('http://localhost:8080/api/match-trainers', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(selections)
@@ -67,8 +67,8 @@ const MatchingSystem = () => {
                         <p>Select all that apply to you.</p>
                         <div className="ms-goals-grid">
                             {goalOptions.map(g => (
-                                <div 
-                                    key={g.id} 
+                                <div
+                                    key={g.id}
                                     className={`ms-goal-item ${selections.goals.includes(g.id) ? 'selected' : ''}`}
                                     onClick={() => toggleGoal(g.id)}
                                 >
@@ -77,13 +77,17 @@ const MatchingSystem = () => {
                                 </div>
                             ))}
                         </div>
-                        <button 
-                            className="ms-next-btn" 
-                            disabled={selections.goals.length === 0}
-                            onClick={() => setStep(1)}
-                        >
-                            Next Step
-                        </button>
+                        <div className="ms-btn-row">
+                            <button className="ms-back-btn" onClick={() => navigate('/dashboard')}>Back</button>
+                            <button
+                                className="ms-next-btn"
+                                disabled={selections.goals.length === 0}
+                                onClick={() => setStep(1)}
+                            >
+                                Next Step
+                            </button>
+                        </div>
+
                     </div>
                 )}
 
@@ -93,10 +97,10 @@ const MatchingSystem = () => {
                         <p>Select your preferred time slot.</p>
                         <div className="ms-options-list">
                             {availabilityOptions.map(a => (
-                                <div 
-                                    key={a.id} 
+                                <div
+                                    key={a.id}
                                     className={`ms-option-item ${selections.availability === a.id ? 'selected' : ''}`}
-                                    onClick={() => setSelections({...selections, availability: a.id})}
+                                    onClick={() => setSelections({ ...selections, availability: a.id })}
                                 >
                                     {a.label}
                                 </div>
@@ -117,7 +121,7 @@ const MatchingSystem = () => {
                         ) : matches.length > 0 ? (
                             <div className="ms-results-list">
                                 {matches.map((t, i) => (
-                                    <div key={t.email} className="ms-trainer-match" style={{animationDelay: `${i*0.1}s`}}>
+                                    <div key={t.email} className="ms-trainer-match" style={{ animationDelay: `${i * 0.1}s` }}>
                                         <div className="ms-match-badge">{(i === 0 ? 'Best Match' : `${t.matchScore}% Match`)}</div>
                                         <div className="ms-trainer-core">
                                             <div className="ms-match-avatar">{t.name[0]}</div>
@@ -154,3 +158,4 @@ const MatchingSystem = () => {
 };
 
 export default MatchingSystem;
+

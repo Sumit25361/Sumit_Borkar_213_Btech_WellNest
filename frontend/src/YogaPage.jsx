@@ -1,126 +1,167 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
+import { useDailyLogs } from './useDailyLogs';
 
-const POSES = [
-    { name: 'Mountain Pose', level: 'Beginner', desc: 'Stand tall, grounding all four corners of your feet.' },
-    { name: 'Downward Dog', level: 'Beginner', desc: 'Form an inverted V-shape, stretching the spine.' },
-    { name: 'Warrior I', level: 'Intermediate', desc: 'Lunging pose that strengthens legs and opens hips.' },
-    { name: 'Tree Pose', level: 'Intermediate', desc: 'Balance on one foot, improving focus and stability.' },
-    { name: 'Child\'s Pose', level: 'Beginner', desc: 'Restful pose that gently stretches hips and back.' },
+const YOGA_POSES = [
+    { id: 'mountain', name: 'Mountain Pose', level: 'Beginner', desc: 'Stand tall, grounding all four corners of your feet.', color: '#ec4899' },
+    { id: 'downward', name: 'Downward Dog', level: 'Beginner', desc: 'Form an inverted V-shape, stretching the spine.', color: '#3b82f6' },
+    { id: 'warrior1', name: 'Warrior I', level: 'Intermediate', desc: 'Lunging pose that strengthens legs and opens hips.', color: '#f59e0b' },
+    { id: 'tree', name: 'Tree Pose', level: 'Intermediate', desc: 'Balance on one foot, improving focus and stability.', color: '#10b981' },
+    { id: 'child', name: 'Child\'s Pose', level: 'Beginner', desc: 'Restful pose that gently stretches hips and back.', color: '#8b5cf6' }
 ];
 
-function YogaPage() {
-    const { logout } = useAuth();
+const YogaPage = () => {
+    const { user } = useAuth();
     const navigate = useNavigate();
-    const [pose, setPose] = useState(POSES[0].name);
+    const [selectedPose, setSelectedPose] = useState(YOGA_POSES[0]);
     const [duration, setDuration] = useState(10);
-    const [log, setLog] = useState([
-        { pose: 'Mountain Pose', duration: 10, time: '07:30 AM' },
-    ]);
+    const { logs: log, addLog, removeLog: handleRemoveLog } = useDailyLogs('yoga', [], user?.email);
 
-    const selected = POSES.find(p => p.name === pose);
-    const totalMins = log.reduce((s, e) => s + e.duration, 0);
-
-    const handleLog = () => {
+    const handleLog = (e) => {
+        e.preventDefault();
         const id = Date.now();
         const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        setLog([{ id, pose, duration: Number(duration), time: now }, ...log]);
+        addLog({ 
+            id, 
+            type: selectedPose.name, 
+            mins: parseInt(duration), 
+            time: now,
+            icon: '🧘' 
+        });
     };
 
-    const handleRemoveLog = (idToRemove) => {
-        setLog(log.filter(item => item.id !== idToRemove));
-    };
+    const totalMins = log.reduce((sum, e) => sum + e.mins, 0);
+    const sessionCount = log.length;
 
     return (
         <div style={s.page}>
             <header style={s.header}>
                 <button onClick={() => navigate('/dashboard')} style={s.back}>← Back</button>
-                <h1 style={s.brand}>🧘 Yoga Tracker</h1>
-
+                <div style={s.headerTitle}>
+                    <span style={s.headerIcon}>🧘</span>
+                    <h1 style={s.brand}>Yoga Tracker</h1>
+                </div>
             </header>
+            
             <div style={s.body}>
+                {/* Left Column */}
                 <div style={s.left}>
                     <div style={s.card}>
                         <h3 style={s.cardTitle}>Today's Summary</h3>
-                        <p style={s.summary}>🧘 Total Practice Time: <strong>{totalMins} min</strong></p>
-                        <p style={s.summary}>📌 Sessions Logged: <strong>{log.length}</strong></p>
+                        <div style={s.summaryRow}>
+                            <span style={s.summaryIcon}>🧘</span>
+                            <span style={s.summaryLabel}>Total Practice Time:</span>
+                            <span style={s.summaryVal}>{totalMins} min</span>
+                        </div>
+                        <div style={s.summaryRow}>
+                            <span style={s.summaryIcon}>🚀</span>
+                            <span style={s.summaryLabel}>Sessions Logged:</span>
+                            <span style={s.summaryVal}>{sessionCount}</span>
+                        </div>
                     </div>
+
                     <div style={s.card}>
-                        <h3 style={s.cardTitle}>🌿 Yoga Poses</h3>
-                        {POSES.map(p => (
-                            <div
-                                key={p.name}
-                                onClick={() => setPose(p.name)}
-                                style={{ ...s.poseRow, border: pose === p.name ? '2px solid #e91e63' : '2px solid #fce4ec' }}
-                            >
-                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <p style={s.poseName}>{p.name}</p>
-                                    <span style={{ ...s.level, background: p.level === 'Beginner' ? '#e8f5e9' : '#fff3e0', color: p.level === 'Beginner' ? '#2e7d32' : '#e65100' }}>{p.level}</span>
+                        <h3 style={s.cardTitle}>✅ Yoga Poses</h3>
+                        <div style={s.poseList}>
+                            {YOGA_POSES.map(pose => (
+                                <div 
+                                    key={pose.id} 
+                                    onClick={() => setSelectedPose(pose)}
+                                    style={{
+                                        ...s.poseItem, 
+                                        borderColor: selectedPose.id === pose.id ? pose.color : 'rgba(16, 185, 129,0.1)'
+                                    }}
+                                >
+                                    <div style={s.poseHeader}>
+                                        <span style={s.poseName}>{pose.name}</span>
+                                        <span style={{...s.levelPill, background: pose.level === 'Beginner' ? '#10b98133' : '#f59e0b33', color: pose.level === 'Beginner' ? '#10b981' : '#f59e0b'}}>{pose.level}</span>
+                                    </div>
+                                    <p style={s.poseDesc}>{pose.desc}</p>
                                 </div>
-                                <p style={s.poseDesc}>{p.desc}</p>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
                 </div>
+
+                {/* Right Column */}
                 <div style={s.right}>
                     <div style={s.card}>
-                        <h3 style={s.cardTitle}>+ Log Session</h3>
-                        <div style={s.selectedBox}>
-                            <p style={s.selName}>{selected?.name}</p>
-                            <p style={s.selDesc}>{selected?.desc}</p>
-                        </div>
-                        <label style={s.label}>Duration (minutes)</label>
-                        <input type="number" value={duration} onChange={e => setDuration(e.target.value)} style={s.input} min="1" max="120" />
-                        <button onClick={handleLog} style={s.btn}>Log Session</button>
+                        <h3 style={s.cardTitle}>✨ Log Session</h3>
+                        <p style={s.selectedName}>{selectedPose.name}</p>
+                        <p style={s.selectedDesc}>{selectedPose.desc}</p>
+                        
+                        <form onSubmit={handleLog}>
+                            <label style={s.label}>Duration (minutes)</label>
+                            <input 
+                                type="number" 
+                                value={duration} 
+                                onChange={e => setDuration(e.target.value)} 
+                                style={s.input} 
+                                min="1" 
+                            />
+                            <button type="submit" style={s.btn}>Log Session</button>
+                        </form>
                     </div>
-                    <div style={{ ...s.card, marginTop: '20px' }}>
-                        <h3 style={s.cardTitle}>📋 Today's Sessions</h3>
-                        {log.map((e, i) => (
-                            <div key={e.id || i} style={s.row}>
-                                <span style={s.rowIcon}>🧘</span>
-                                <div style={{ flex: 1 }}>
-                                    <p style={s.rowTitle}>{e.pose}</p>
-                                    <p style={s.rowSub}>{e.duration} min</p>
+
+                    <div style={{...s.card, flex: 1}}>
+                        <h3 style={s.cardTitle}>📜 Today's Sessions</h3>
+                        {log.length === 0 && <p style={s.sub}>No sessions logged yet. Ready to flow? 🌿</p>}
+                        <div style={s.historyList}>
+                            {log.map((e) => (
+                                <div key={e.id} style={s.row}>
+                                    <span style={s.rowIcon}>{e.icon}</span>
+                                    <div style={{ flex: 1 }}>
+                                        <p style={s.rowTitle}>{e.type}</p>
+                                        <p style={s.rowSub}>{e.mins} min</p>
+                                    </div>
+                                    <span style={s.rowTime}>{e.time}</span>
+                                    <button onClick={() => handleRemoveLog(e.id)} style={s.deleteBtn}>❌</button>
                                 </div>
-                                <span style={s.rowTime}>{e.time}</span>
-                                <button onClick={() => handleRemoveLog(e.id)} style={s.deleteBtn} title="Remove log">❌</button>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     );
-}
+};
 
 const s = {
-    page: { minHeight: '100vh', background: 'linear-gradient(160deg, #1a0a2e 0%, #2d1b4e 40%, #1a0f35 100%)', fontFamily: "'Segoe UI',sans-serif" },
-    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 32px', background: 'rgba(18,6,40,0.92)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(168,85,247,0.2)', boxShadow: '0 4px 24px rgba(0,0,0,0.5)' },
-    brand: { color: '#c084fc', fontSize: '20px', fontWeight: '700', margin: 0, textShadow: '0 0 20px rgba(168,85,247,0.5)' },
-    back: { background: 'rgba(168,85,247,0.08)', border: '1px solid rgba(168,85,247,0.3)', borderRadius: '8px', padding: '8px 16px', color: '#c084fc', cursor: 'pointer', fontWeight: '600' },
-    body: { display: 'flex', gap: '24px', padding: '28px 32px', flexWrap: 'wrap' },
-    left: { display: 'flex', flexDirection: 'column', gap: '20px', flex: 1, minWidth: '280px' },
-    right: { flex: 1, minWidth: '280px', display: 'flex', flexDirection: 'column', gap: '20px' },
-    card: { background: 'rgba(20,8,45,0.80)', backdropFilter: 'blur(20px)', borderRadius: '16px', padding: '24px', border: '1px solid rgba(168,85,247,0.15)', boxShadow: '0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(168,85,247,0.08)' },
-    cardTitle: { color: '#c084fc', fontWeight: '700', fontSize: '16px', margin: '0 0 12px', textShadow: '0 0 12px rgba(168,85,247,0.4)' },
-    summary: { color: 'rgba(233,213,255,0.8)', fontSize: '14px', margin: '0 0 6px' },
-    poseRow: { borderRadius: '10px', padding: '12px 14px', marginBottom: '8px', cursor: 'pointer', transition: 'all 0.2s', background: 'rgba(168,85,247,0.04)', border: '2px solid rgba(168,85,247,0.15)' },
-    poseName: { margin: 0, fontWeight: '600', fontSize: '14px', color: '#e9d5ff' },
-    poseDesc: { margin: '4px 0 0', fontSize: '12px', color: 'rgba(233,213,255,0.55)' },
-    level: { fontSize: '11px', fontWeight: '700', padding: '2px 9px', borderRadius: '50px' },
-    label: { display: 'block', fontSize: '13px', color: 'rgba(233,213,255,0.7)', marginBottom: '6px', marginTop: '12px' },
-    input: { width: '100%', padding: '10px', borderRadius: '8px', border: '1.5px solid rgba(168,85,247,0.25)', fontSize: '14px', boxSizing: 'border-box', outline: 'none', background: 'rgba(168,85,247,0.06)', color: '#e9d5ff' },
-    btn: { marginTop: '16px', width: '100%', padding: '12px', background: 'linear-gradient(90deg,#7c3aed,#a855f7)', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: '700', fontSize: '15px', cursor: 'pointer', boxShadow: '0 0 20px rgba(168,85,247,0.3)' },
-    selectedCard: { background: 'rgba(168,85,247,0.10)', backdropFilter: 'blur(20px)', borderRadius: '12px', padding: '14px 16px', border: '1px solid rgba(168,85,247,0.25)', marginBottom: '14px' },
-    selectedName: { color: '#c084fc', fontWeight: '700', fontSize: '15px', margin: '0 0 4px' },
-    selectedDesc: { color: 'rgba(233,213,255,0.6)', fontSize: '12px', margin: 0 },
-    row: { display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 0', borderBottom: '1px solid rgba(168,85,247,0.08)' },
-    rowIcon: { fontSize: '22px' },
-    rowTitle: { margin: 0, fontWeight: '600', fontSize: '14px', color: '#e9d5ff' },
-    rowSub: { margin: 0, fontSize: '12px', color: 'rgba(233,213,255,0.5)' },
-    rowTime: { marginLeft: 'auto', fontSize: '12px', color: 'rgba(233,213,255,0.35)', whiteSpace: 'nowrap', marginRight: '8px' },
-    deleteBtn: { background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px', padding: '4px', opacity: 0.6, transition: 'opacity 0.2s' },
+    page: { minHeight: '100vh', background: 'linear-gradient(160deg, #040a06 0%, #08100b 45%, #050308 100%)', fontFamily: "'Outfit', sans-serif", color: '#fdf6f0' },
+    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 32px', background: 'rgba(6, 14, 10,0.95)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(16, 185, 129,0.15)', boxShadow: '0 4px 32px rgba(0,0,0,0.6)' },
+    headerTitle: { display: 'flex', alignItems: 'center', gap: '12px' },
+    headerIcon: { fontSize: '24px' },
+    brand: { color: '#fdf6f0', fontSize: '1.2rem', fontWeight: '700', margin: 0, fontFamily: "'Cinzel', serif" },
+    back: { background: 'rgba(16, 185, 129,0.1)', border: '1px solid rgba(16, 185, 129,0.3)', borderRadius: '10px', padding: '8px 18px', color: '#10b981', cursor: 'pointer', fontWeight: '700', fontSize: '13px' },
+    body: { display: 'flex', gap: '24px', padding: '32px', maxWidth: '1200px', margin: '0 auto', flexWrap: 'wrap' },
+    left: { flex: 1.2, minWidth: '340px', display: 'flex', flexDirection: 'column', gap: '20px' },
+    right: { flex: 1, minWidth: '320px', display: 'flex', flexDirection: 'column', gap: '20px' },
+    card: { background: 'rgba(10, 22, 15,0.4)', backdropFilter: 'blur(32px)', borderRadius: '22px', padding: '28px', border: '1px solid rgba(16, 185, 129,0.12)', boxShadow: '0 12px 48px rgba(0,0,0,0.4)' },
+    cardTitle: { color: '#34d399', fontWeight: '800', fontSize: '15px', margin: '0 0 20px', textTransform: 'uppercase', letterSpacing: '1px' },
+    summaryRow: { display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' },
+    summaryIcon: { fontSize: '18px', filter: 'drop-shadow(0 0 8px rgba(16, 185, 129,0.4))' },
+    summaryLabel: { fontSize: '14px', color: 'rgba(253,246,240,0.6)', flex: 1 },
+    summaryVal: { fontSize: '15px', fontWeight: '800', color: '#fdf6f0' },
+    poseList: { display: 'flex', flexDirection: 'column', gap: '12px' },
+    poseItem: { padding: '16px', borderRadius: '14px', background: 'rgba(255,255,255,0.03)', border: '1px solid transparent', cursor: 'pointer', transition: 'all 0.25s' },
+    poseHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' },
+    poseName: { fontSize: '15px', fontWeight: '700', color: '#fdf6f0' },
+    levelPill: { fontSize: '10px', fontWeight: '800', padding: '3px 9px', borderRadius: '50px', textTransform: 'uppercase' },
+    poseDesc: { fontSize: '12px', color: 'rgba(253,246,240,0.5)', margin: 0, lineHeight: '1.5' },
+    selectedName: { fontSize: '1.4rem', fontWeight: '800', color: '#fdf6f0', marginBottom: '4px', letterSpacing: '-0.5px' },
+    selectedDesc: { fontSize: '13px', color: 'rgba(253,246,240,0.6)', marginBottom: '24px', lineHeight: '1.6' },
+    label: { display: 'block', fontSize: '11px', fontWeight: '700', color: 'rgba(253,246,240,0.4)', textTransform: 'uppercase', marginBottom: '8px' },
+    input: { width: '100%', padding: '14px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(16, 185, 129,0.15)', borderRadius: '12px', color: '#fdf6f0', fontSize: '15px', outline: 'none', marginBottom: '20px' },
+    btn: { width: '100%', padding: '15px', background: 'linear-gradient(135deg, #10b981, #059669, #7c3aed)', borderRadius: '14px', border: 'none', color: '#fff', fontWeight: '800', fontSize: '16px', cursor: 'pointer', boxShadow: '0 8px 24px rgba(16, 185, 129,0.3)' },
+    historyList: { display: 'flex', flexDirection: 'column', gap: '0' },
+    row: { display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 0', borderBottom: '1px solid rgba(16, 185, 129,0.08)' },
+    rowIcon: { fontSize: '20px' },
+    rowTitle: { fontSize: '14px', fontWeight: '700', margin: 0 },
+    rowSub: { fontSize: '12px', color: 'rgba(253,246,240,0.5)', margin: 0 },
+    rowTime: { marginLeft: 'auto', fontSize: '12px', color: 'rgba(253,246,240,0.3)', marginRight: '10px' },
+    deleteBtn: { background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px', padding: '4px', opacity: 0.5 },
+    sub: { fontSize: '13px', color: 'rgba(253,246,240,0.4)' }
 };
 
 export default YogaPage;

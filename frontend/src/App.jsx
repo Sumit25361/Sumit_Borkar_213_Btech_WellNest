@@ -23,22 +23,26 @@ import MatchingSystem from './MatchingSystem';
 import './index.css';
 
 import AdminSidebar from './AdminSidebar';
+import Chatbot from './Chatbot';
 
 const MainLayout = ({ children }) => {
   const { user } = useAuth();
   
-  if (user?.role === 'trainer') {
+  const userRole = user?.role?.toLowerCase();
+  
+  if (userRole === 'trainer') {
     return (
       <div className="trd-page">
         <TrainerSidebar />
         <main className="trd-main">
           {children}
         </main>
+        <Chatbot />
       </div>
     );
   }
   
-  if (user?.role === 'admin') {
+  if (userRole === 'admin') {
     return (
       <div className="admin-layout">
         <AdminSidebar />
@@ -55,6 +59,7 @@ const MainLayout = ({ children }) => {
       <main className="wn-app-main">
         {children}
       </main>
+      <Chatbot />
     </div>
   );
 };
@@ -70,14 +75,14 @@ const ProtectedRoute = ({ children }) => {
 const AdminRoute = ({ children }) => {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
-  if (user.role !== 'admin') return <Navigate to="/dashboard" replace />;
+  if (user?.role?.toLowerCase() !== 'admin') return <Navigate to="/dashboard" replace />;
   return <MainLayout>{children}</MainLayout>;
 };
 
 const TrainerRoute = ({ children }) => {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
-  if (user.role !== 'trainer') return <Navigate to="/dashboard" replace />;
+  if (user?.role?.toLowerCase() !== 'trainer') return <Navigate to="/dashboard" replace />;
   return <MainLayout>{children}</MainLayout>;
 };
 

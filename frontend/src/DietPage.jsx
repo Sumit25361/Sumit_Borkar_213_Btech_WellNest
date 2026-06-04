@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
+import { useDailyLogs } from './useDailyLogs';
 
 const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Pre-Workout', 'Post-Workout'];
 
@@ -19,6 +21,7 @@ const FOOD_SUGGESTIONS = [
 ];
 
 function DietPage() {
+    const { user } = useAuth();
     const navigate = useNavigate();
     const [mealType, setMealType] = useState('Breakfast');
     const [foodName, setFoodName] = useState('');
@@ -26,10 +29,7 @@ function DietPage() {
     const [protein, setProtein] = useState('');
     const [carbs, setCarbs] = useState('');
     const [fat, setFat] = useState('');
-    const [log, setLog] = useState([
-        { id:1, meal:'Breakfast', food:'Oatmeal', cal:150, protein:5, carbs:27, fat:3, time:'08:00 AM', icon:'🥣' },
-        { id:2, meal:'Lunch',     food:'Dal & Rice', cal:320, protein:12, carbs:58, fat:4, time:'01:00 PM', icon:'🍛' },
-    ]);
+    const { logs: log, addLog, removeLog: handleRemove } = useDailyLogs('diet', [], user?.email);
     const [goalCal] = useState(2000);
 
     const totalCal     = log.reduce((s,e) => s + e.cal, 0);
@@ -50,13 +50,11 @@ function DietPage() {
         if (!foodName || !calories) return;
         const now = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
         const suggestion = FOOD_SUGGESTIONS.find(f => f.name === foodName);
-        setLog([{ id: Date.now(), meal: mealType, food: foodName, cal: Number(calories),
+        addLog({ id: Date.now(), meal: mealType, food: foodName, cal: Number(calories),
             protein: Number(protein)||0, carbs: Number(carbs)||0, fat: Number(fat)||0,
-            time: now, icon: suggestion?.icon || '🍽️' }, ...log]);
+            time: now, icon: suggestion?.icon || '🍽️' });
         setFoodName(''); setCalories(''); setProtein(''); setCarbs(''); setFat('');
     };
-
-    const handleRemove = (id) => setLog(log.filter(e => e.id !== id));
 
     return (
         <div style={s.page}>
@@ -124,19 +122,19 @@ function DietPage() {
                         <label style={s.label}>Food Name</label>
                         <input value={foodName} onChange={e => setFoodName(e.target.value)} style={s.input} placeholder="e.g. Grilled Chicken" />
                         <label style={s.label}>Calories (kcal)</label>
-                        <input type="number" value={calories} onChange={e => setCalories(e.target.value)} style={s.input} placeholder="e.g. 220" min="0" />
+                        <input type="text" inputMode="numeric" value={calories} onChange={e => setCalories(e.target.value.replace(/[^0-9]/g, ''))} style={s.input} placeholder="e.g. 220" />
                         <div style={s.macroRow}>
                             <div style={{flex:1}}>
                                 <label style={s.label}>Protein (g)</label>
-                                <input type="number" value={protein} onChange={e => setProtein(e.target.value)} style={s.input} placeholder="0" min="0" />
+                                <input type="text" inputMode="numeric" value={protein} onChange={e => setProtein(e.target.value.replace(/[^0-9]/g, ''))} style={s.input} placeholder="0" />
                             </div>
                             <div style={{flex:1}}>
                                 <label style={s.label}>Carbs (g)</label>
-                                <input type="number" value={carbs} onChange={e => setCarbs(e.target.value)} style={s.input} placeholder="0" min="0" />
+                                <input type="text" inputMode="numeric" value={carbs} onChange={e => setCarbs(e.target.value.replace(/[^0-9]/g, ''))} style={s.input} placeholder="0" />
                             </div>
                             <div style={{flex:1}}>
                                 <label style={s.label}>Fat (g)</label>
-                                <input type="number" value={fat} onChange={e => setFat(e.target.value)} style={s.input} placeholder="0" min="0" />
+                                <input type="text" inputMode="numeric" value={fat} onChange={e => setFat(e.target.value.replace(/[^0-9]/g, ''))} style={s.input} placeholder="0" />
                             </div>
                         </div>
                         <button onClick={handleLog} style={s.btn}>Log Meal</button>

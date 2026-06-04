@@ -16,7 +16,7 @@ const HealthBlog = () => {
     useEffect(() => {
         const fetchBlogs = async () => {
             try {
-                const res = await fetch('http://localhost:5000/api/blogs');
+                const res = await fetch('http://localhost:8080/api/blogs');
                 const data = await res.json();
                 setBlogs(data);
             } catch (err) {
@@ -96,7 +96,7 @@ const HealthBlog = () => {
                                 <div className="hb-card-footer">
                                     <div className="hb-card-author">
                                         <div className="hb-author-avatar">
-                                            {blog.authorName[0]}
+                                            {blog.authorName ? blog.authorName[0] : 'U'}
                                         </div>
                                         <div>
                                             <div className="hb-author-name">{blog.authorName}</div>
@@ -104,7 +104,15 @@ const HealthBlog = () => {
                                         </div>
                                     </div>
                                     <div className="hb-card-stats">
-                                        <span>❤️ {blog.likes.length}</span>
+                                        <span>❤️ {(() => {
+                                            if (!blog.likes) return 0;
+                                            try {
+                                                const parsed = Array.isArray(blog.likes) ? blog.likes : JSON.parse(blog.likes);
+                                                return parsed.length;
+                                            } catch {
+                                                return 0;
+                                            }
+                                        })()}</span>
                                     </div>
                                 </div>
                             </div>

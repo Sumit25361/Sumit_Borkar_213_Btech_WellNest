@@ -21,14 +21,27 @@ const BlogEditor = () => {
         if (id) {
             const fetchBlog = async () => {
                 try {
-                    const res = await fetch(`http://localhost:5000/api/blogs/${id}`);
+                    const res = await fetch(`http://localhost:8080/api/blogs/${id}`);
                     const data = await res.json();
                     if (data.success !== false) {
+                        let parsedTags = '';
+                        if (data.tags) {
+                            try {
+                                const tagsArr = typeof data.tags === 'string' ? JSON.parse(data.tags) : data.tags;
+                                if (Array.isArray(tagsArr)) {
+                                    parsedTags = tagsArr.join(', ');
+                                } else {
+                                    parsedTags = data.tags;
+                                }
+                            } catch {
+                                parsedTags = data.tags;
+                            }
+                        }
                         setFormData({
                             title: data.title,
                             content: data.content,
                             category: data.category,
-                            tags: data.tags?.join(', ') || ''
+                            tags: parsedTags
                         });
                     }
                 } catch (err) {
@@ -44,7 +57,7 @@ const BlogEditor = () => {
         e.preventDefault();
         setSubmitting(true);
         const method = id ? 'PUT' : 'POST';
-        const url = id ? `http://localhost:5000/api/blogs/${id}` : 'http://localhost:5000/api/blogs';
+        const url = id ? `http://localhost:8080/api/blogs/${id}` : 'http://localhost:8080/api/blogs';
 
         try {
             const res = await fetch(url, {
@@ -52,7 +65,7 @@ const BlogEditor = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     ...formData,
-                    tags: formData.tags.split(',').map(t => t.trim()).filter(t => t),
+                    tags: JSON.stringify(formData.tags.split(',').map(t => t.trim()).filter(t => t)),
                     authorName: user.name,
                     authorEmail: user.email,
                     authorRole: user.role
@@ -73,7 +86,7 @@ const BlogEditor = () => {
     return (
         <div className="be-container">
             <header className="be-header">
-                <button className="be-back-btn" onClick={() => navigate(-1)}>← Back</button>
+                <button className="be-back-btn" onClick={() => navigate(-1)}>← Back</button>
                 <h1 className="be-title">{id ? 'Edit Article' : 'Write a New Article'}</h1>
             </header>
 
@@ -135,3 +148,4 @@ const BlogEditor = () => {
 };
 
 export default BlogEditor;
+

@@ -32,7 +32,7 @@ function getInitials(name) {
 export default function TrainerDashboard() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
-    const info = TRAINER_INFO[user?.email] || { name: user?.name || 'Trainer', spec: 'Fitness Coach', gradient:'linear-gradient(135deg,#e8621a,#d97706)', price:'' };
+    const info = TRAINER_INFO[user?.email] || { name: user?.name || 'Trainer', spec: 'Fitness Coach', gradient:'linear-gradient(135deg,#10b981,#d97706)', price:'' };
     const initials = getInitials(info.name);
 
     const [bookings, setBookings] = useState([]);
@@ -113,7 +113,7 @@ export default function TrainerDashboard() {
     const totalCancelled = bookings.filter(b => b.status === 'cancelled').length;
 
     return (
-        <>
+        <div className="trd-content">
             <div className="trd-topbar">
                 <div>
                     <h1 className="trd-title">{info.name.split(' ')[0]}'s Dashboard</h1>
@@ -122,129 +122,129 @@ export default function TrainerDashboard() {
                 <div className="trd-live-badge">🟢 Live</div>
             </div>
 
-                {/* Stats */}
-                <div className="trd-stats-row">
-                    <div className="trd-stat-card">
-                        <div className="trd-stat-icon">📅</div>
-                        <div className="trd-stat-num">{bookings.length}</div>
-                        <div className="trd-stat-label">Total Bookings</div>
-                    </div>
-                    <div className="trd-stat-card confirmed">
-                        <div className="trd-stat-icon">✅</div>
-                        <div className="trd-stat-num">{totalConfirmed}</div>
-                        <div className="trd-stat-label">Confirmed</div>
-                    </div>
-                    <div className="trd-stat-card" style={{borderColor:'rgba(251,191,36,0.22)'}}>
-                        <div className="trd-stat-icon">⏳</div>
-                        <div className="trd-stat-num">{totalPending}</div>
-                        <div className="trd-stat-label">Pending</div>
-                    </div>
-                    <div className="trd-stat-card cancelled">
-                        <div className="trd-stat-icon">❌</div>
-                        <div className="trd-stat-num">{totalCancelled}</div>
-                        <div className="trd-stat-label">Cancelled</div>
-                    </div>
+            {/* Stats */}
+            <div className="trd-stats-row">
+                <div className="trd-stat-card">
+                    <div className="trd-stat-icon">📅</div>
+                    <div className="trd-stat-num">{bookings.length}</div>
+                    <div className="trd-stat-label">Total Bookings</div>
+                </div>
+                <div className="trd-stat-card confirmed">
+                    <div className="trd-stat-icon">✅</div>
+                    <div className="trd-stat-num">{totalConfirmed}</div>
+                    <div className="trd-stat-label">Confirmed</div>
+                </div>
+                <div className="trd-stat-card" style={{borderColor:'rgba(251,191,36,0.22)'}}>
+                    <div className="trd-stat-icon">⏳</div>
+                    <div className="trd-stat-num">{totalPending}</div>
+                    <div className="trd-stat-label">Pending</div>
+                </div>
+                <div className="trd-stat-card cancelled">
+                    <div className="trd-stat-icon">❌</div>
+                    <div className="trd-stat-num">{totalCancelled}</div>
+                    <div className="trd-stat-label">Cancelled</div>
+                </div>
+            </div>
+
+            {/* Filter tabs */}
+            <div className="trd-filter-row">
+                {['all','confirmed','pending','cancelled'].map(f => (
+                    <button
+                        key={f}
+                        className={`trd-filter-btn${filter === f ? ' active' : ''}`}
+                        onClick={() => setFilter(f)}
+                    >
+                        {f.charAt(0).toUpperCase() + f.slice(1)}
+                        <span className="trd-filter-count">
+                            {f === 'all' ? bookings.length : bookings.filter(b => (b.status||'confirmed') === f).length}
+                        </span>
+                    </button>
+                ))}
+            </div>
+
+            {/* Bookings table */}
+            <div className="trd-card">
+                <div className="trd-card-header">
+                    <h2 className="trd-card-title">👥 Booked Users</h2>
+                    <span className="trd-card-count">{shown.length} session{shown.length !== 1 ? 's' : ''}</span>
                 </div>
 
-                {/* Filter tabs */}
-                <div className="trd-filter-row">
-                    {['all','confirmed','pending','cancelled'].map(f => (
-                        <button
-                            key={f}
-                            className={`trd-filter-btn${filter === f ? ' active' : ''}`}
-                            onClick={() => setFilter(f)}
-                        >
-                            {f.charAt(0).toUpperCase() + f.slice(1)}
-                            <span className="trd-filter-count">
-                                {f === 'all' ? bookings.length : bookings.filter(b => (b.status||'confirmed') === f).length}
-                            </span>
-                        </button>
-                    ))}
-                </div>
-
-                {/* Bookings table */}
-                <div className="trd-card">
-                    <div className="trd-card-header">
-                        <h2 className="trd-card-title">👥 Booked Users</h2>
-                        <span className="trd-card-count">{shown.length} session{shown.length !== 1 ? 's' : ''}</span>
+                {shown.length === 0 ? (
+                    <div className="trd-empty">
+                        <div className="trd-empty-icon">📭</div>
+                        <p className="trd-empty-text">
+                            {bookings.length === 0
+                                ? 'No sessions booked yet. Share your profile to get bookings!'
+                                : 'No sessions match this filter.'}
+                        </p>
                     </div>
-
-                    {shown.length === 0 ? (
-                        <div className="trd-empty">
-                            <div className="trd-empty-icon">📭</div>
-                            <p className="trd-empty-text">
-                                {bookings.length === 0
-                                    ? 'No sessions booked yet. Share your profile to get bookings!'
-                                    : 'No sessions match this filter.'}
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="trd-table-wrap">
-                            <table className="trd-table">
-                                <thead>
-                                    <tr>
-                                        <th className="trd-th">#</th>
-                                        <th className="trd-th">User</th>
-                                        <th className="trd-th">Email</th>
-                                        <th className="trd-th">Booked On</th>
-                                        <th className="trd-th">Status</th>
-                                        <th className="trd-th">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {shown.map((b, i) => {
-                                        const st = b.status || 'confirmed';
-                                        const sc = STATUS_COLORS[st] || STATUS_COLORS.confirmed;
-                                        const userInitials = getInitials(b.userName || '?');
-                                        return (
-                                            <tr key={b.id} className="trd-tr">
-                                                <td className="trd-td trd-td-num">{i + 1}</td>
-                                                <td className="trd-td">
-                                                    <div className="trd-user-cell">
-                                                        <div className="trd-user-avatar">{userInitials}</div>
-                                                        <span className="trd-user-name">{b.userName}</span>
-                                                    </div>
-                                                </td>
-                                                <td className="trd-td trd-td-email">{b.userEmail}</td>
-                                                <td className="trd-td trd-td-date">{fmtDate(b.bookedAt)}</td>
-                                                <td className="trd-td">
-                                                    <span
-                                                        className="trd-status-pill"
-                                                        style={{background: sc.bg, border:`1px solid ${sc.border}`, color: sc.text}}
-                                                    >
-                                                        {sc.label}
-                                                    </span>
-                                                </td>
-                                                <td className="trd-td">
-                                                    <div style={{display:'flex',gap:6}}>
-                                                        {st === 'cancelled' || st === 'pending' ? (
-                                                            <button
-                                                                className="trd-confirm-btn"
-                                                                onClick={() => handleConfirm(b.id)}
-                                                            >
-                                                                ✅ Confirm
-                                                            </button>
-                                                        ) : null}
-                                                        {st !== 'cancelled' ? (
-                                                            <button
-                                                                className="trd-cancel-btn"
-                                                                onClick={() => handleCancel(b.id)}
-                                                            >
-                                                                Cancel
-                                                            </button>
-                                                        ) : (
-                                                            <span className="trd-na">—</span>
-                                                        )}
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
-                </div>
-        </>
+                ) : (
+                    <div className="trd-table-wrap">
+                        <table className="trd-table">
+                            <thead>
+                                <tr>
+                                    <th className="trd-th">#</th>
+                                    <th className="trd-th">User</th>
+                                    <th className="trd-th">Email</th>
+                                    <th className="trd-th">Booked On</th>
+                                    <th className="trd-th">Status</th>
+                                    <th className="trd-th">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {shown.map((b, i) => {
+                                    const st = b.status || 'confirmed';
+                                    const sc = STATUS_COLORS[st] || STATUS_COLORS.confirmed;
+                                    const userInitials = getInitials(b.userName || '?');
+                                    return (
+                                        <tr key={b.id} className="trd-tr">
+                                            <td className="trd-td trd-td-num">{i + 1}</td>
+                                            <td className="trd-td">
+                                                <div className="trd-user-cell">
+                                                    <div className="trd-user-avatar">{userInitials}</div>
+                                                    <span className="trd-user-name">{b.userName}</span>
+                                                </div>
+                                            </td>
+                                            <td className="trd-td trd-td-email">{b.userEmail}</td>
+                                            <td className="trd-td trd-td-date">{fmtDate(b.bookedAt)}</td>
+                                            <td className="trd-td">
+                                                <span
+                                                    className="trd-status-pill"
+                                                    style={{background: sc.bg, border:`1px solid ${sc.border}`, color: sc.text}}
+                                                >
+                                                    {sc.label}
+                                                </span>
+                                            </td>
+                                            <td className="trd-td">
+                                                <div style={{display:'flex',gap:6}}>
+                                                    {(st === 'cancelled' || st === 'pending') && (
+                                                        <button
+                                                            className="trd-confirm-btn"
+                                                            onClick={() => handleConfirm(b.id)}
+                                                        >
+                                                            ✅ Confirm
+                                                        </button>
+                                                    )}
+                                                    {st !== 'cancelled' ? (
+                                                        <button
+                                                            className="trd-cancel-btn"
+                                                            onClick={() => handleCancel(b.id)}
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    ) : (
+                                                        <span className="trd-na">—</span>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </div>
+        </div>
     );
 }

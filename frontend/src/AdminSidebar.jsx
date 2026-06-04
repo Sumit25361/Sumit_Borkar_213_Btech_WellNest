@@ -16,8 +16,6 @@ export default function AdminSidebar({ onTabChange, activeTab }) {
 
   const handleLogout = () => { logout(); navigate('/login'); };
 
-  // For the dashboard, we use internal state tabs. 
-  // For other pages (like Blog), we navigate.
   const handleNav = (item) => {
     if (item.label === 'Blog') {
         navigate('/blog');

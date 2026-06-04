@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
+import { useDailyLogs } from './useDailyLogs';
 
 const DRINK_OPTIONS = ['Water', 'Juice', 'Coconut Water', 'Sports Drink', 'Lemonade', 'Milk', 'Cold Drink', 'Smoothie'];
 
@@ -9,10 +10,7 @@ function HydrationPage() {
     const navigate = useNavigate();
     const [amount, setAmount] = useState(250);
     const [drink, setDrink] = useState('Water');
-    const [log, setLog] = useState([
-        { drink: 'Water', amount: 300, time: '10:24 AM' },
-        { drink: 'Juice', amount: 150, time: '08:10 AM' },
-    ]);
+    const { logs: log, addLog, removeLog: handleRemoveLog } = useDailyLogs('hydration', [], user?.email);
 
     const totalIntake = log.reduce((sum, e) => sum + e.amount, 0);
     const goal = 2500;
@@ -21,11 +19,7 @@ function HydrationPage() {
     const handleLog = () => {
         const id = Date.now(); // unique ID for deletion
         const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        setLog([{ id, drink, amount: Number(amount), time: now }, ...log]);
-    };
-
-    const handleRemoveLog = (idToRemove) => {
-        setLog(log.filter(item => item.id !== idToRemove));
+        addLog({ id, drink, amount: Number(amount), time: now });
     };
 
     return (

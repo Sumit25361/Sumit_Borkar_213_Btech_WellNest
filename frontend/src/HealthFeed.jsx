@@ -12,7 +12,7 @@ const HealthFeed = () => {
     const fetchPosts = async () => {
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:5000/api/posts');
+            const res = await fetch('http://localhost:8080/api/posts');
             const data = await res.json();
             setPosts(data);
         } catch (err) {
@@ -31,7 +31,7 @@ const HealthFeed = () => {
 
         setPosting(true);
         try {
-            const res = await fetch('http://localhost:5000/api/posts', {
+            const res = await fetch('http://localhost:8080/api/posts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -55,7 +55,7 @@ const HealthFeed = () => {
     const handleLike = async (postId) => {
         if (!user) return;
         try {
-            const res = await fetch(`http://localhost:5000/api/posts/${postId}/like`, {
+            const res = await fetch(`http://localhost:8080/api/posts/${postId}/like`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: user.email })
@@ -127,39 +127,47 @@ const HealthFeed = () => {
                 <div className="hf-loading">Loading feed...</div>
             ) : (
                 <div className="hf-posts-list">
-                    {posts.map(post => (
-                        <div key={post.id} className="hf-post-card">
-                            <div className="hf-post-header">
-                                <div className="hf-avatar">
-                                    {getInitials(post.authorName)}
-                                </div>
-                                <div className="hf-author-info">
-                                    <div className="hf-author-name">
-                                        {post.authorName}
-                                        {post.authorRole === 'trainer' && <span className="hf-role-badge">Trainer</span>}
+                    {posts.map(post => {
+                        const likesList = (() => {
+                            if (!post.likes) return [];
+                            try {
+                                return Array.isArray(post.likes) ? post.likes : JSON.parse(post.likes);
+                            } catch { return []; }
+                        })();
+                        return (
+                            <div key={post.id} className="hf-post-card">
+                                <div className="hf-post-header">
+                                    <div className="hf-avatar">
+                                        {getInitials(post.authorName)}
                                     </div>
-                                    <div className="hf-post-meta">{timeAgo(post.createdAt)}</div>
+                                    <div className="hf-author-info">
+                                        <div className="hf-author-name">
+                                            {post.authorName}
+                                            {post.authorRole === 'trainer' && <span className="hf-role-badge">Trainer</span>}
+                                        </div>
+                                        <div className="hf-post-meta">{timeAgo(post.createdAt)}</div>
+                                    </div>
+                                </div>
+                                <div className="hf-post-content">
+                                    {post.content}
+                                </div>
+                                <div className="hf-post-actions">
+                                    <button 
+                                        className={`hf-action-btn ${likesList.includes(user?.email) ? 'liked' : ''}`}
+                                        onClick={() => handleLike(post.id)}
+                                    >
+                                        ❤️ {likesList.length}
+                                    </button>
+                                    <button 
+                                        className="hf-action-btn"
+                                        onClick={() => handleShare(post)}
+                                    >
+                                        🔗 Share
+                                    </button>
                                 </div>
                             </div>
-                            <div className="hf-post-content">
-                                {post.content}
-                            </div>
-                            <div className="hf-post-actions">
-                                <button 
-                                    className={`hf-action-btn ${post.likes.includes(user?.email) ? 'liked' : ''}`}
-                                    onClick={() => handleLike(post.id)}
-                                >
-                                    ❤️ {post.likes.length}
-                                </button>
-                                <button 
-                                    className="hf-action-btn"
-                                    onClick={() => handleShare(post)}
-                                >
-                                    🔗 Share
-                                </button>
-                            </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
         </div>
@@ -167,3 +175,4 @@ const HealthFeed = () => {
 };
 
 export default HealthFeed;
+

@@ -23,7 +23,24 @@ function BMICalculator() {
     const [result, setResult] = useState(null);
     const [error, setError] = useState('');
 
-    const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        if (name === 'height' || name === 'weight') {
+            // Allow only digits and a single decimal point
+            let cleaned = value.replace(/[^0-9.]/g, '');
+            const parts = cleaned.split('.');
+            if (parts.length > 2) {
+                cleaned = parts[0] + '.' + parts.slice(1).join('');
+            }
+            setForm(prev => ({ ...prev, [name]: cleaned }));
+        } else if (name === 'age') {
+            // Allow only digits
+            const cleaned = value.replace(/[^0-9]/g, '');
+            setForm(prev => ({ ...prev, [name]: cleaned }));
+        } else {
+            setForm(prev => ({ ...prev, [name]: value }));
+        }
+    };
 
     const calculate = () => {
         setError('');
@@ -32,6 +49,7 @@ function BMICalculator() {
         weight = parseFloat(weight);
         age    = parseInt(age);
 
+        if (isNaN(height) || isNaN(weight) || isNaN(age)) { setError('Please enter valid numeric values.'); return; }
         if (!height || !weight || !age) { setError('Please fill in all fields.'); return; }
         if (age < 5 || age > 120)       { setError('Please enter a valid age (5–120).'); return; }
 
@@ -70,16 +88,16 @@ function BMICalculator() {
 
                         <div className="bmi-field">
                             <label>Height ({form.unit === 'metric' ? 'cm' : 'inches'})</label>
-                            <input type="number" name="height" placeholder={form.unit === 'metric' ? 'e.g. 170' : 'e.g. 67'} value={form.height} onChange={handleChange} min="1" />
+                            <input type="text" inputMode="decimal" name="height" placeholder={form.unit === 'metric' ? 'e.g. 170' : 'e.g. 67'} value={form.height} onChange={handleChange} />
                         </div>
                         <div className="bmi-field">
                             <label>Weight ({form.unit === 'metric' ? 'kg' : 'lbs'})</label>
-                            <input type="number" name="weight" placeholder={form.unit === 'metric' ? 'e.g. 65' : 'e.g. 143'} value={form.weight} onChange={handleChange} min="1" />
+                            <input type="text" inputMode="decimal" name="weight" placeholder={form.unit === 'metric' ? 'e.g. 65' : 'e.g. 143'} value={form.weight} onChange={handleChange} />
                         </div>
                         <div className="bmi-field-row">
                             <div className="bmi-field">
                                 <label>Age (years)</label>
-                                <input type="number" name="age" placeholder="e.g. 21" value={form.age} onChange={handleChange} min="5" max="120" />
+                                <input type="text" inputMode="numeric" name="age" placeholder="e.g. 21" value={form.age} onChange={handleChange} />
                             </div>
                             <div className="bmi-field">
                                 <label>Gender</label>
